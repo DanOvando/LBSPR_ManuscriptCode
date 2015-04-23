@@ -1,0 +1,27 @@
+#LBSPR Parameters,,
+MK,1.5,0.41
+Linf,377,343
+CVLinf,0.1,0.1
+L50,245,257
+L95,285,320
+Walpha,0.0001,5.88E-06
+Wbeta,3,3
+FecB,3,3
+Mpow,0,0
+NGTG,40,40
+MaxSD,3,3
+#Below only required for Simulation,,
+Linc,5,
+R0,10,
+recK,5,
+SL50,245,
+SL95,285,
+FM,0.5,
+MLL,,
+DisMortFrac,,
+#Assess Specific Parameters,,
+SL50Min,,0.001
+SL50Max,,377
+DeltaMin,,0.001
+DeltaMax,,100
+#Bayesian Priors,,
