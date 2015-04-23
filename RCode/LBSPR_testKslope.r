@@ -77,6 +77,7 @@ par(mfrow=c(2,3), cex.lab=1.5, bty="l", mar=c(5,5,2,2), oma=c(1,1,1,1))
 plot(Run$Linf, Run$kslope, xlab="Linf", ylab="kslope")
 plot(Run$CVLinf, Run$kslope, xlab="CVLinf", ylab="kslope")
 plot(Run$RelL50, Run$kslope, xlab="L50/Linf", ylab="kslope")
+plot(Run$MatDelta, Run$kslope, xlab="MatDelta", ylab="kslope")
 plot(Run$Mpow, Run$kslope, xlab="Mpow", ylab="kslope")
 plot(Run$MK, Run$kslope, xlab="MK", ylab="kslope")
 
@@ -101,7 +102,7 @@ plot(Mod2, pages=1, residuals=T, pch=19, cex=0.25, scheme=1, col='#FF8000', shad
 Run$LinfMK <- log(Run$Linf) - log(Run$MK)
 plot(Run$LogKSlope, Run$LinfMK)
 
-Mod3 <- gam(LogKSlope ~ s(CVLinf, bs="cs") + s(RelL50, bs="cs") + s(Mpow, bs="cs")+ s(LinfMK, bs="cs"), data=Run)
+Mod3 <- gam(LogKSlope ~ s(LinfMK, bs="cs") + s(CVLinf, bs="cs") + s(RelL50, bs="cs") + s(MatDelta, bs="cs") + s(Mpow, bs="cs"), data=Run)
 summary(Mod3)
 plot(Run$LinfMK, Run$LogKSlope)
 par(mfrow=c(2,2))
@@ -118,7 +119,7 @@ summary(Mod4)
 anova(Mod3, Mod4, test="F")
 AIC(Mod3, Mod4) # GAM is technically better but prefer a linear model if possible
 
-Mod5 <- lm(LogKSlope ~ CVLinf + RelL50 + Mpow + LinfMK, data=Run)
+Mod5 <- lm(LogKSlope ~ LinfMK + CVLinf + RelL50 + MatDelta + Mpow, data=Run)
 summary(Mod5)
 par(mfrow=c(2,3))
 plot(Mod5)
@@ -146,10 +147,12 @@ for (X in 1:25) {
   kslope <- exp(RunoptLHM)
   
   LMPredict <- PredictKSlope(SimPars)
-  
-  LHM <- SimMod_LHR(SimPars, kslope)
-  LHMpredict <- SimMod_LHR(SimPars, LMPredict)
-  LHMnoslope <- SimMod_LHR(SimPars, kslope=0)
+  SimPars$kslope <- kslope
+  LHM <- SimMod_LHR(SimPars)
+  SimPars$kslope <- LMPredict
+  LHMpredict <- SimMod_LHR(SimPars)
+  SimPars$kslope <- 0
+  LHMnoslope <- SimMod_LHR(SimPars)
   plot(LHM$FitPR, ylim=c(0, max(LHM$FitPR)*1.5))
   lines(LHMpredict$FitPR, ylim=c(0, max(LHMpredict$FitPR)), col="blue")
   lines(LHMnoslope$FitPR, ylim=c(0, max(LHMnoslope$FitPR)), col="red")
